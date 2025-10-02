@@ -24,7 +24,7 @@ const options = {
         description: 'Production server'
       }
       ,{
-        url: 'https://event-ease-guyfqznp3-a-nkis-projects.vercel.app/api',
+        url: 'https://eventease-v8y4.onrender.com/api',
         description: 'Render Deployment'
       }
 
