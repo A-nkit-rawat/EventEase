@@ -184,11 +184,60 @@ const options = {
 const swaggerSpec = swaggerJsdoc(options);
 
 const swaggerDocs = (app) => {
-  // Swagger UI
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-    customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: 'EventEase API Documentation'
-  }));
+  // Custom Swagger UI HTML with CDN links (works on Vercel)
+  app.get('/api-docs', (req, res) => {
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>EventEase API Documentation</title>
+        <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui.css">
+        <style>
+          body { 
+            margin: 0; 
+            padding: 0; 
+            background: #fafafa;
+          }
+          .topbar { 
+            display: none !important; 
+          }
+          .swagger-ui .info {
+            margin: 20px 0;
+          }
+          .swagger-ui .info .title {
+            color: #6366f1;
+          }
+        </style>
+      </head>
+      <body>
+        <div id="swagger-ui"></div>
+        <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
+        <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js"></script>
+        <script>
+          window.onload = function() {
+            const ui = SwaggerUIBundle({
+              url: '/api-docs.json',
+              dom_id: '#swagger-ui',
+              deepLinking: true,
+              presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIStandalonePreset
+              ],
+              plugins: [
+                SwaggerUIBundle.plugins.DownloadUrl
+              ],
+              layout: "StandaloneLayout",
+              persistAuthorization: true
+            });
+            window.ui = ui;
+          };
+        </script>
+      </body>
+      </html>
+    `);
+  });
 
   // JSON format
   app.get('/api-docs.json', (req, res) => {
@@ -196,7 +245,7 @@ const swaggerDocs = (app) => {
     res.send(swaggerSpec);
   });
 
-//   console.log(`📚 Swagger docs available at http://localhost:${process.env.PORT || 3000}/api-docs`);
+  console.log(`📚 Swagger docs available at /api-docs`);
 };
 
 module.exports = swaggerDocs;
