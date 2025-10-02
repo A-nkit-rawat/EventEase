@@ -7,6 +7,7 @@ const userRoutes=require("./routes/userRoutes.js");
 const loginRoutes=require("./routes/loginRoutes.js");
 const cors =require("cors");
 const { login } = require("./controllers/authController.js");
+const swaggerDocs = require('./config/swagger');
 
 dotenv.config();
 
@@ -21,10 +22,19 @@ then(()=>{
 }).catch((err)=>{
     console.log("Error connecting to MongoDB",err);
 })
-
+// / Swagger Documentation
+swaggerDocs(app);
 app.use("/api/auth",loginRoutes);
 app.use("/api/user",userRoutes);
 app.use("/api/admin",adminRoutes);
+
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to EventEase API',
+    documentation: '/api-docs',
+    version: '1.0.0'
+  });
+});
 
 //global error handler
 app.use((err, req, res, next) => {
