@@ -1,5 +1,6 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const { de } = require('zod/v4/locales');
 
 const options = {
   definition: {
@@ -22,6 +23,11 @@ const options = {
         url: 'https://eventease.200xsecure.com/api',
         description: 'Production server'
       }
+      ,{
+        url: 'https://event-ease-guyfqznp3-a-nkis-projects.vercel.app/',
+        description: 'Vercel Deployment'
+      }
+
     ],
     components: {
       securitySchemes: {
