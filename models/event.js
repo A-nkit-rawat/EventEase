@@ -1,6 +1,6 @@
 const generateEventId = require("../Helper/generateEventId");
 
-const mongoose =required('mongoose');
+const mongoose =require('mongoose');
 const { Schema } = mongoose;
 
 const eventSchema = new Schema({
@@ -17,7 +17,7 @@ const eventSchema = new Schema({
 // Middleware to generate event_id before saving if not present
 eventSchema.pre('save', function(next) {
     if (!this.eventId) {
-        this.eventIid=generateEventId(new Date());
+        this.eventId=generateEventId(new Date());
     }
     next();
 });

@@ -3,6 +3,6 @@ module.exports=  function generateEventId(date) {
                         'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     const month=monthNames[date.getMonth()];
     const year=date.getFullYear().toString();
-    const randomPart=Math.random().toString(36).substr(2, 5).toUpperCase();
+    const randomPart=Math.random().toString(36).substr(2, 3).toUpperCase();
     return `EVT-${month}-${year}-${randomPart}`;
 }

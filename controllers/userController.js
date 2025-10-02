@@ -12,11 +12,13 @@ const getAllEvents = async (req, res) => {
     // Optional filters
     const from = req.query.from;
     const to = req.query.to;
-    const filters = { eventDate: { $gte: new Date() } };
-    if (!from && !to) {
+    let filters = { eventDate: { $gte: new Date() } };
+    if (from && to) {
       filters = { eventDate: { $gte: from, $lte: to } };
     }
     if (req.query.category) {
+      // mutiple category
+      // filters.eventCategory = {$in:req.body.category};
       filters.eventCategory = req.query.category;
     }
 
@@ -60,10 +62,10 @@ const getAllEvents = async (req, res) => {
 };
 
 
-const getEventById = async (req, res) => {
+const getEvent = async (req, res) => {
   try {
-    const eventId = req.params.id;
-    const event = await Event.findById(eventId);
+    const eventId = req.params.eventId;
+    const event = await Event.findOne({eventId});
     if (!event) {
       return res.status(404).json(
         {
@@ -95,8 +97,8 @@ const getEventById = async (req, res) => {
 const bookEvent = async (req, res) => {
   try {
     const eventId = req.params.eventId;
-    const Event = await Event.findById(eventId);
-    if (!Event) {
+    const event = await Event.findOne({eventId});
+    if (!event) {
       return res.status(404).json(
         {
           success: false,
@@ -105,22 +107,30 @@ const bookEvent = async (req, res) => {
         }
       );
     }
-    const user = User.find({ email: req.email });
-    if (!user) {
-      return res.status(404).json(
-        {
-          success: false,
-          message: 'User not found',
-          error: error.message
-        }
-      );
-    }
-    const userId = user._id;
-    let userBookings = await Booking.countDocuments({
-      userId,
+    // const user = User.findOne({ email: req.email });
+    // if (!user) {
+    //   return res.status(404).json(
+    //     {
+    //       success: false,
+    //       message: 'User not found',
+    //       error: error.message
+    //     }
+    //   );
+    // }
+    // const userId = user._id;
+    let userBookings;
+    let userId=req.user.id;
+    try{
+       userBookings = await Booking.countDocuments({
+      userId  ,
       eventId,
       status: 'confirmed'
     });
+    }
+    catch(error){
+      userBookings=0;
+    }
+    
 
     if (userBookings >= 2) {
       return res.status(400).json({
@@ -128,10 +138,17 @@ const bookEvent = async (req, res) => {
         message: 'You have already made 2 bookings for this event'
       });
     }
-    const totalBookings = await Booking.countDocuments({
+    let totalBookings;
+    try{
+       totalBookings = await Booking.countDocuments({
       eventId,
       status: 'confirmed'
     });
+    }
+    catch(error){
+      totalBookings=0;
+    }
+    
 
     if (totalBookings >= Event.eventSeats) {
       return res.status(400).json({
@@ -139,6 +156,10 @@ const bookEvent = async (req, res) => {
         message: 'No seats available for this event'
       });
     }
+    // console.log(totalBookings);
+    // console.log(event);
+    // console.log(req.user.id);
+    // Cr
     const booking = await Booking.create({
       userId,
       eventId
@@ -161,7 +182,11 @@ const bookEvent = async (req, res) => {
     
   }
     catch (error) {
-
+      res.status(500).json({
+        success: false,
+        message: 'Error booking event',
+        error: error.message
+      });
     }
   }
   // cancel booking
@@ -215,6 +240,5 @@ const cancelEvent = async (req, res) => {
     });
   }
 };
-
-module.exports = { getAllEvents, getEventById, bookEvent, cancelEvent };
+module.exports = { getAllEvents, getEvent, bookEvent, cancelEvent };
 
