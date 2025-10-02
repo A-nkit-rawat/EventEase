@@ -5,7 +5,7 @@ const {login,registerUser}=require('../controllers/authController.js');
 
 /**
  * @swagger
- * api/auth/user/login:
+ * /auth/login:
  *   post:
  *     tags: [Authentication]
  *     summary: Login as user
@@ -23,7 +23,7 @@ const {login,registerUser}=require('../controllers/authController.js');
  *               email:
  *                 type: string
  *                 format: email
- *                 example: john@example.com
+ *                 example: johnexample.com
  *               password:
  *                 type: string
  *                 example: password123
@@ -59,7 +59,7 @@ const {login,registerUser}=require('../controllers/authController.js');
 router.post('/login',login);
 /**
  * @swagger
- * api/auth/user/register:
+ * /auth/register:
  *   post:
  *     tags: [Authentication]
  *     summary: Register a new user

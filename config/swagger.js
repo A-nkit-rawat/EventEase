@@ -16,7 +16,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000/api',
+        url: 'http://localhost:8080/api',
         description: 'Development server'
       },
       {
@@ -24,8 +24,8 @@ const options = {
         description: 'Production server'
       }
       ,{
-        url: 'https://event-ease-guyfqznp3-a-nkis-projects.vercel.app/',
-        description: 'Vercel Deployment'
+        url: 'https://event-ease-guyfqznp3-a-nkis-projects.vercel.app/api',
+        description: 'Render Deployment'
       }
 
     ],
@@ -178,7 +178,7 @@ const options = {
       }
     ]
   },
-  apis: ['../routes/*.js', '../controllers/*.js']
+  apis: ['./routes/*.js', './controllers/*.js']
 };
 
 const swaggerSpec = swaggerJsdoc(options);
